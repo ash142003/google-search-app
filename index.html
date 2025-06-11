@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget Startup Idea Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(15px);
+      animation: fadeIn 1s ease;
+      position: relative;
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+      font-size: 2.2rem;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 1px 1px 2px #0006;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ffffff44;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input[type="number"]:focus {
+      border-color: #00bcd4;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    button {
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #00bcd4, #0072ff);
+      color: #fff;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 188, 212, 0.4);
+      transition: 0.3s ease-in-out;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(0, 188, 212, 0.6);
+    }
+
+    #idea {
+      margin-top: 1.5rem;
+      font-size: 1.3rem;
+      color: #ffffff;
+      min-height: 3rem;
+    }
+
+    #details {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #e0f7fa;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid #ffffff22;
+      transition: all 0.4s ease;
+    }
+
+    #details a {
+      color: #4dd0e1;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    #details a:hover {
+      text-decoration: underline;
+      color: #00e5ff;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .gcse-result {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💼 Real-World Startup Idea Generator</h1>
+    <input type="number" id="budgetInput" placeholder="Enter your budget in ₹" min="1" />
+    <button onclick="generateIdea()">Generate Real Startup Idea 🚀</button>
+    <p id="idea">Enter your budget and get realistic startup ideas!</p>
+    <div id="details" class="hidden"></div>
+  </div>
+
+  <script>
+    async function generateIdea() {
+      const inputBudget = parseInt(document.getElementById("budgetInput").value);
+      const ideaElement = document.getElementById("idea");
+      const detailsElement = document.getElementById("details");
+
+      if (!inputBudget || inputBudget <= 0) {
+        ideaElement.textContent = "❌ Please enter a valid budget.";
+        detailsElement.innerHTML = "";
+        return;
+      }
+
+      ideaElement.textContent = "🔄 Fetching ideas... Please wait.";
+      detailsElement.classList.add("hidden");
+      detailsElement.innerHTML = "";
+
+      // Fetch from your secure backend endpoint instead of exposing the API key
+      try {
+        const response = await fetch(`/api/startup-ideas?budget=${inputBudget}`);
+        const data = await response.json();
+
+        if (data.title && data.snippet && data.link) {
+          ideaElement.textContent = `✅ Idea: ${data.title}`;
+          detailsElement.innerHTML = `<p><strong>Summary:</strong> ${data.snippet}</p><a href="${data.link}" target="_blank">Read More 🔗</a>`;
+          detailsElement.classList.remove("hidden");
+        } else {
+          ideaElement.textContent = "⚠️ No relevant ideas found. Try a different amount.";
+          detailsElement.innerHTML = "";
+        }
+      } catch (error) {
+        ideaElement.textContent = "⚠️ Error fetching idea. Please try again later.";
+        detailsElement.innerHTML = "";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
